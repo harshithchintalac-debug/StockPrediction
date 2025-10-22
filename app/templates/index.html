@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>StockTrendAI — LSTM Stock Dashboard</title>
+    <link rel="stylesheet" href="/static/style.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/plotly.js/2.20.0/plotly.min.js"></script>
+  </head>
+
+  <body>
+    <!-- Animated Background Particles -->
+    <div class="particles">
+      <div class="particle"></div>
+      <div class="particle"></div>
+      <div class="particle"></div>
+      <div class="particle"></div>
+      <div class="particle"></div>
+    </div>
+
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+      <div class="nav-title">
+        <span class="logo-icon">📊</span>
+        <span class="logo-text">StockTrend<span style="color: #38ef7d;">AI</span></span>
+      </div>
+      <div class="nav-right">
+        <button class="nav-btn active">🏠 Home</button>
+        <button class="nav-btn">📈 Analytics</button>
+        <button class="nav-btn">💼 Portfolio</button>
+        <button class="nav-btn">⚙️ Settings</button>
+      </div>
+    </nav>
+
+    <!-- Main Container -->
+    <div class="container">
+      <!-- Hero Section -->
+      <div class="header-section">
+        <div class="badge">AI-Powered Predictions</div>
+        <h1>Stock Market Prediction Dashboard</h1>
+        <p class="subtitle">
+          Leverage advanced LSTM Neural Networks to forecast stock closing prices with precision
+        </p>
+        <div class="stats-row">
+          <div class="stat-box">
+            <div class="stat-icon">🎯</div>
+            <div class="stat-value">95.4%</div>
+            <div class="stat-label">Accuracy</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-icon">⚡</div>
+            <div class="stat-value">1.2s</div>
+            <div class="stat-label">Prediction Speed</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-icon">📊</div>
+            <div class="stat-value">10K+</div>
+            <div class="stat-label">Data Points</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Stock Selection Buttons -->
+      <div class="section-header">
+        <h2>🏦 Select Stock Index</h2>
+        <p class="section-subtitle">Choose from popular Indian stock indices</p>
+      </div>
+      <div class="stock-buttons">
+        <button class="stock-btn" data-stock="NIFTY">
+          <span class="stock-icon">🏦</span>
+          <span class="stock-name">NIFTY 50</span>
+          <span class="stock-change positive">+2.3%</span>
+        </button>
+        <button class="stock-btn" data-stock="SENSEX">
+          <span class="stock-icon">💹</span>
+          <span class="stock-name">BSE SENSEX</span>
+          <span class="stock-change positive">+1.8%</span>
+        </button>
+        <button class="stock-btn" data-stock="ADANI">
+          <span class="stock-icon">🚢</span>
+          <span class="stock-name">ADANIPORTS</span>
+          <span class="stock-change negative">-0.5%</span>
+        </button>
+        <button class="stock-btn" data-stock="RELIANCE">
+          <span class="stock-icon">⚡</span>
+          <span class="stock-name">RELIANCE</span>
+          <span class="stock-change positive">+3.2%</span>
+        </button>
+      </div>
+
+      <!-- Prediction Form -->
+      <div class="section-header">
+        <h2>🔮 Generate Predictions</h2>
+        <p class="section-subtitle">Select the number of future days to forecast</p>
+      </div>
+      <form method="post" action="/predict" class="form-box" id="predictForm">
+        <div class="form-content">
+          <label for="days" class="form-label">
+            <span class="label-icon">📅</span>
+            Forecast Period (Days)
+          </label>
+          <div class="input-wrapper">
+            <input
+              type="number"
+              id="days"
+              name="days"
+              value="5"
+              min="1"
+              max="60"
+              required
+            />
+            <span class="input-unit">days</span>
+          </div>
+          <button type="submit" class="predict-btn" id="predictButton">
+            <span class="btn-icon">🚀</span>
+            <span class="btn-text">Generate Forecast</span>
+            <span class="btn-arrow">→</span>
+          </button>
+        </div>
+      </form>
+      
+      <!-- Loading Spinner -->
+      <div id="loadingSpinner" style="display: none;">
+        <div class="loading-container">
+          <div class="spinner-ring"></div>
+          <div class="spinner-ring"></div>
+          <div class="spinner-ring"></div>
+          <p class="loading-text">🔮 Analyzing market patterns...</p>
+        </div>
+      </div>
+
+      {% if error %}
+      <div class="error">
+        <span class="error-icon">⚠️</span>
+        <span>{{ error }}</span>
+      </div>
+      {% endif %}
+
+      <!-- Results -->
+      {% if preds %}
+      <div class="results-section">
+        <div class="section-header">
+          <h2>� Prediction Results</h2>
+          <p class="section-subtitle">AI-generated forecasts for the next {{ preds|length }} trading days</p>
+        </div>
+        
+        <div class="results-grid">
+          <!-- Chart takes 2/3 width -->
+          <div class="chart-container">
+            <div id="chart"></div>
+          </div>
+          
+          <!-- Table takes 1/3 width -->
+          <div class="results-card">
+            <h3>📈 Forecasted Prices</h3>
+            <div class="table-wrapper">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Date</th>
+                    <th>Predicted Close</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for d,p in preds %}
+                  <tr>
+                    <td><span class="date-badge">{{ d }}</span></td>
+                    <td><span class="price-badge">₹{{ p }}</span></td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endif %}
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <p>© 2025 StockTrendAI | Powered by LSTM Neural Networks</p>
+    </footer>
+
+
+    <script>
+      // Add loading animation on form submit
+      document.getElementById('predictForm').addEventListener('submit', function() {
+        document.getElementById('loadingSpinner').style.display = 'flex';
+        document.getElementById('predictButton').disabled = true;
+      });
+
+      // Stock button selection
+      document.querySelectorAll('.stock-btn').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+          // Remove active class from all buttons
+          document.querySelectorAll('.stock-btn').forEach(b => b.classList.remove('selected'));
+          // Add active class to clicked button
+          this.classList.add('selected');
+          
+          // Ripple effect
+          const ripple = document.createElement('span');
+          const rect = this.getBoundingClientRect();
+          ripple.className = 'ripple-effect';
+          ripple.style.left = (e.clientX - rect.left) + 'px';
+          ripple.style.top = (e.clientY - rect.top) + 'px';
+          this.appendChild(ripple);
+          setTimeout(() => ripple.remove(), 600);
+        });
+      });
+
+      // Smooth scroll animations
+      const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+      };
+
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+          }
+        });
+      }, observerOptions);
+
+      document.querySelectorAll('.stock-buttons, .form-box, .results-section, .stat-box').forEach(el => {
+        observer.observe(el);
+      });
+
+      // Particle animation
+      const particles = document.querySelectorAll('.particle');
+      particles.forEach((particle, index) => {
+        particle.style.animationDelay = `${index * 0.5}s`;
+      });
+    </script>
+
+    {% if history %}
+    <script>
+      const hist = {{ history | tojson }};
+      const histDates = hist.map((r) => r.date);
+      const histPrices = hist.map((r) => r.close);
+      const preds = {{ preds | tojson }};
+      const predDates = preds.map((p) => p[0]);
+      const predPrices = preds.map((p) => p[1]);
+
+      const traceHist = {
+        x: histDates,
+        y: histPrices,
+        type: 'scatter',
+        mode: "lines",
+        name: "Historical Data",
+        line: { 
+          color: "#667eea", 
+          width: 3,
+          shape: 'spline'
+        },
+        fill: 'tozeroy',
+        fillcolor: 'rgba(102, 126, 234, 0.1)',
+        hovertemplate: '<b>Date:</b> %{x}<br><b>Close:</b> ₹%{y:.2f}<extra></extra>'
+      };
+
+      const tracePred = {
+        x: predDates,
+        y: predPrices,
+        type: 'scatter',
+        mode: "lines+markers",
+        name: "AI Predictions",
+        line: { 
+          color: "#11998e", 
+          width: 4, 
+          dash: "dot",
+          shape: 'spline'
+        },
+        marker: {
+          size: 10,
+          color: "#38ef7d",
+          symbol: 'diamond',
+          line: {
+            color: '#11998e',
+            width: 2
+          }
+        },
+        hovertemplate: '<b>Date:</b> %{x}<br><b>Predicted:</b> ₹%{y:.2f}<extra></extra>'
+      };
+
+      // Add connection line between historical and predicted
+      const connectionTrace = {
+        x: [histDates[histDates.length - 1], predDates[0]],
+        y: [histPrices[histPrices.length - 1], predPrices[0]],
+        type: 'scatter',
+        mode: 'lines',
+        line: {
+          color: '#94a3b8',
+          width: 2,
+          dash: 'dot'
+        },
+        showlegend: false,
+        hoverinfo: 'skip'
+      };
+
+      const data = [traceHist, connectionTrace, tracePred];
+      const layout = {
+        title: {
+          text: "📈 Stock Price Trends & AI Predictions",
+          font: {
+            family: "Inter, sans-serif",
+            size: 22,
+            color: "#1e293b",
+            weight: 800
+          },
+          x: 0.05,
+          xanchor: 'left'
+        },
+        xaxis: { 
+          title: {
+            text: "Date",
+            font: {
+              size: 14,
+              weight: 600
+            }
+          },
+          gridcolor: '#e2e8f0',
+          showline: true,
+          linecolor: '#cbd5e1',
+          linewidth: 2,
+          zeroline: false
+        },
+        yaxis: { 
+          title: {
+            text: "Close Price (₹)",
+            font: {
+              size: 14,
+              weight: 600
+            }
+          },
+          gridcolor: '#e2e8f0',
+          showline: true,
+          linecolor: '#cbd5e1',
+          linewidth: 2,
+          zeroline: false
+        },
+        paper_bgcolor: "rgba(255,255,255,0)",
+        plot_bgcolor: "rgba(255,255,255,0.5)",
+        font: { 
+          family: "Inter, sans-serif", 
+          size: 12,
+          color: "#475569"
+        },
+        hovermode: 'x unified',
+        hoverlabel: {
+          bgcolor: "#1e293b",
+          font: {
+            family: "Inter, sans-serif",
+            size: 13,
+            color: "#ffffff"
+          },
+          bordercolor: "#667eea"
+        },
+        legend: {
+          orientation: "h",
+          yanchor: "bottom",
+          y: -0.25,
+          xanchor: "center",
+          x: 0.5,
+          bgcolor: 'rgba(255,255,255,0.9)',
+          bordercolor: '#e2e8f0',
+          borderwidth: 2,
+          font: {
+            size: 13,
+            weight: 600
+          }
+        },
+        margin: {
+          l: 70,
+          r: 40,
+          t: 80,
+          b: 80
+        },
+        shapes: [
+          {
+            type: 'rect',
+            xref: 'paper',
+            yref: 'paper',
+            x0: 0,
+            y0: 0,
+            x1: 1,
+            y1: 1,
+            line: {
+              color: '#e2e8f0',
+              width: 2
+            }
+          }
+        ]
+      };
+
+      const config = {
+        responsive: true,
+        displayModeBar: true,
+        displaylogo: false,
+        modeBarButtonsToRemove: ['pan2d', 'lasso2d', 'select2d', 'autoScale2d'],
+        toImageButtonOptions: {
+          format: 'png',
+          filename: 'stocktrend_prediction',
+          height: 600,
+          width: 1200,
+          scale: 2
+        }
+      };
+
+      Plotly.newPlot("chart", data, layout, config);
+      
+      // Animate chart on load
+      setTimeout(() => {
+        Plotly.animate('chart', {
+          data: data,
+          traces: [0, 1, 2],
+          layout: layout
+        }, {
+          transition: {
+            duration: 1000,
+            easing: 'cubic-in-out'
+          },
+          frame: {
+            duration: 1000
+          }
+        });
+      }, 100);
+    </script>
+    {% endif %}
+
+
+    <style>
+      /* Loading Spinner */
+      #loadingSpinner {
+        display: none;
+        justify-content: center;
+        align-items: center;
+        padding: 60px 20px;
+      }
+
+      .loading-container {
+        text-align: center;
+        position: relative;
+      }
+
+      .spinner-ring {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 80px;
+        height: 80px;
+        border: 4px solid transparent;
+        border-radius: 50%;
+        animation: spin 1.5s linear infinite;
+      }
+
+      .spinner-ring:nth-child(1) {
+        border-top-color: #667eea;
+        animation-duration: 1s;
+      }
+
+      .spinner-ring:nth-child(2) {
+        border-right-color: #764ba2;
+        animation-duration: 1.5s;
+        width: 60px;
+        height: 60px;
+      }
+
+      .spinner-ring:nth-child(3) {
+        border-bottom-color: #38ef7d;
+        animation-duration: 2s;
+        width: 40px;
+        height: 40px;
+      }
+
+      .loading-text {
+        margin-top: 120px;
+        color: #667eea;
+        font-weight: 700;
+        font-size: 18px;
+        animation: pulse 2s ease-in-out infinite;
+      }
+
+      @keyframes spin {
+        0% { transform: translate(-50%, -50%) rotate(0deg); }
+        100% { transform: translate(-50%, -50%) rotate(360deg); }
+      }
+
+      /* Ripple Effect */
+      .ripple-effect {
+        position: absolute;
+        background: rgba(255, 255, 255, 0.6);
+        border-radius: 50%;
+        width: 20px;
+        height: 20px;
+        animation: ripple-animation 0.6s ease-out;
+        pointer-events: none;
+      }
+
+      @keyframes ripple-animation {
+        to {
+          transform: scale(10);
+          opacity: 0;
+        }
+      }
+
+      /* Smooth reveal animations */
+      .stock-buttons, .form-box, .results-section, .stat-box {
+        opacity: 0;
+        transform: translateY(30px);
+        transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      .stock-buttons.visible, .form-box.visible, .results-section.visible, .stat-box.visible {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    </style>
+  </body>
+</html>

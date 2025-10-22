@@ -1,0 +1,641 @@
+/* static/style.css */
+
+/* ------------------------------ */
+/* ----- 1. Global Styles & Variables ----- */
+/* ------------------------------ */
+
+:root {
+  --bg-color: #0f172a; /* Slate 900 */
+  --card-color: #1e293b; /* Slate 800 */
+  --border-color: #334155; /* Slate 700 */
+  --text-primary: #f1f5f9; /* Slate 100 */
+  --text-secondary: #94a3b8; /* Slate 400 */
+  --accent-primary: #667eea;
+  --accent-secondary: #764ba2;
+  --accent-green: #38ef7d;
+  --accent-red: #ef4444;
+
+  --font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    Helvetica, Arial, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-family);
+  background-color: var(--bg-color);
+  color: var(--text-primary);
+  line-height: 1.6;
+  overflow-x: hidden; /* Prevent horizontal scroll from particles */
+}
+
+h1,
+h2,
+h3 {
+  font-weight: 800;
+  color: var(--text-primary);
+  line-height: 1.2;
+}
+
+h1 {
+  font-size: 3.5rem;
+  letter-spacing: -1.5px;
+}
+
+h2 {
+  font-size: 2.5rem;
+  letter-spacing: -1px;
+}
+
+h3 {
+  font-size: 1.25rem;
+}
+
+p {
+  color: var(--text-secondary);
+  margin-bottom: 1rem;
+}
+
+/* ------------------------------ */
+/* ----- 2. Animated Background ----- */
+/* ------------------------------ */
+
+.particles {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  z-index: -1;
+  overflow: hidden;
+}
+
+.particle {
+  position: absolute;
+  background: var(--accent-primary);
+  border-radius: 50%;
+  opacity: 0;
+  animation: float 20s linear infinite;
+}
+
+@keyframes float {
+  0% {
+    transform: translateY(100vh) scale(0);
+    opacity: 0;
+  }
+  5%,
+  95% {
+    opacity: 0.6;
+  }
+  100% {
+    transform: translateY(-10vh) scale(1);
+    opacity: 0;
+  }
+}
+
+.particle:nth-child(1) {
+  width: 15px;
+  height: 15px;
+  left: 10%;
+  animation-duration: 15s;
+  animation-delay: 0s;
+}
+.particle:nth-child(2) {
+  width: 25px;
+  height: 25px;
+  left: 30%;
+  animation-duration: 25s;
+  animation-delay: 2s;
+  background-color: var(--accent-green);
+}
+.particle:nth-child(3) {
+  width: 10px;
+  height: 10px;
+  left: 55%;
+  animation-duration: 18s;
+  animation-delay: 5s;
+}
+.particle:nth-child(4) {
+  width: 20px;
+  height: 20px;
+  left: 80%;
+  animation-duration: 22s;
+  animation-delay: 1s;
+  background-color: var(--accent-secondary);
+}
+.particle:nth-child(5) {
+  width: 12px;
+  height: 12px;
+  left: 95%;
+  animation-duration: 12s;
+  animation-delay: 3s;
+}
+
+/* ------------------------------ */
+/* ----- 3. Navigation Bar ----- */
+/* ------------------------------ */
+
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem 5%;
+  background: rgba(15, 23, 42, 0.8);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--border-color);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.nav-title {
+  font-size: 1.8rem;
+  font-weight: 900;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.nav-right {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.nav-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  padding: 0.75rem 1rem;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.nav-btn:hover {
+  background-color: var(--card-color);
+  color: var(--text-primary);
+}
+
+.nav-btn.active {
+  background: linear-gradient(
+    90deg,
+    var(--accent-primary),
+    var(--accent-secondary)
+  );
+  color: white;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
+
+/* ------------------------------ */
+/* ----- 4. Main Layout ----- */
+/* ------------------------------ */
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 3rem 1.5rem;
+}
+
+.section-header {
+  text-align: center;
+  margin-top: 5rem;
+  margin-bottom: 2rem;
+}
+
+.section-header:first-of-type {
+  margin-top: 0;
+}
+
+.section-subtitle {
+  font-size: 1.1rem;
+  max-width: 600px;
+  margin: 1rem auto 0;
+}
+
+/* ------------------------------ */
+/* ----- 5. Header Section ----- */
+/* ------------------------------ */
+
+.header-section {
+  text-align: center;
+  padding: 4rem 0;
+}
+
+.badge {
+  display: inline-block;
+  background: linear-gradient(
+    90deg,
+    rgba(118, 75, 162, 0.2),
+    rgba(56, 239, 125, 0.2)
+  );
+  color: var(--accent-green);
+  padding: 0.5rem 1rem;
+  border-radius: 999px;
+  font-weight: 700;
+  border: 1px solid rgba(56, 239, 125, 0.3);
+  margin-bottom: 1.5rem;
+}
+
+.header-section .subtitle {
+  font-size: 1.25rem;
+  max-width: 700px;
+  margin: 1rem auto 3rem;
+}
+
+.stats-row {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+
+.stat-box {
+  background: var(--card-color);
+  padding: 1.5rem;
+  border-radius: 12px;
+  border: 1px solid var(--border-color);
+  min-width: 200px;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.stat-box:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+  border-color: var(--accent-primary);
+}
+
+.stat-icon {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+}
+
+.stat-value {
+  font-size: 2.25rem;
+  font-weight: 800;
+  color: var(--text-primary);
+}
+
+.stat-label {
+  font-size: 1rem;
+  color: var(--text-secondary);
+}
+
+/* ------------------------------ */
+/* ----- 6. Stock Buttons ----- */
+/* ------------------------------ */
+
+.stock-buttons {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1.5rem;
+}
+
+.stock-btn {
+  background: var(--card-color);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 1.5rem;
+  font-family: var(--font-family);
+  cursor: pointer;
+  text-align: left;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  transition: all 0.3s ease;
+  overflow: hidden; /* For ripple */
+  position: relative; /* For ripple */
+}
+
+.stock-btn:hover {
+  transform: translateY(-5px);
+  border-color: var(--accent-primary);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+}
+
+.stock-btn.selected {
+  border-color: var(--accent-green);
+  box-shadow: 0 0 20px rgba(56, 239, 125, 0.2);
+}
+
+.stock-icon {
+  font-size: 2rem;
+  background-color: var(--bg-color);
+  padding: 0.75rem;
+  border-radius: 8px;
+}
+.stock-name {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  flex-grow: 1;
+}
+
+.stock-change {
+  font-weight: 700;
+  padding: 0.25rem 0.5rem;
+  border-radius: 6px;
+  font-size: 0.9rem;
+}
+
+.stock-change.positive {
+  color: var(--accent-green);
+  background-color: rgba(56, 239, 125, 0.1);
+}
+.stock-change.negative {
+  color: var(--accent-red);
+  background-color: rgba(239, 68, 68, 0.1);
+}
+
+/* ------------------------------ */
+/* ----- 7. Prediction Form ----- */
+/* ------------------------------ */
+
+.form-box {
+  background: var(--card-color);
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  padding: 2.5rem;
+  margin-top: 2rem;
+}
+
+.form-content {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.form-label {
+  font-size: 1.2rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-grow: 1;
+}
+
+.input-wrapper {
+  display: flex;
+  align-items: center;
+  background: var(--bg-color);
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  overflow: hidden;
+}
+
+.input-wrapper input[type="number"] {
+  background: transparent;
+  border: none;
+  color: var(--text-primary);
+  font-size: 1.1rem;
+  padding: 0.75rem 1rem;
+  width: 100px;
+  font-weight: 600;
+  outline: none;
+}
+/* Hide spinner arrows on number input */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+.input-unit {
+  padding-right: 1rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.predict-btn {
+  background: linear-gradient(
+    90deg,
+    var(--accent-primary),
+    var(--accent-secondary)
+  );
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 0.8rem 1.5rem;
+  font-size: 1.1rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
+
+.predict-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+}
+
+.predict-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.btn-arrow {
+  transition: transform 0.2s ease;
+}
+
+.predict-btn:hover .btn-arrow {
+  transform: translateX(5px);
+}
+
+/* ------------------------------ */
+/* ----- 8. Results & Table ----- */
+/* ------------------------------ */
+.results-section {
+  background: rgba(30, 41, 59, 0.8);
+  border: 1px solid var(--border-color);
+  backdrop-filter: blur(5px);
+  border-radius: 16px;
+  padding: 1.5rem;
+  margin-top: 4rem;
+}
+
+.results-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 1.5rem;
+  margin-top: 1rem;
+}
+
+.chart-container {
+  padding: 1rem;
+  border-radius: 12px;
+  background-color: rgba(255, 255, 255, 0.03);
+}
+
+.results-card {
+  padding: 1.5rem;
+  border-radius: 12px;
+  background-color: var(--bg-color);
+}
+
+.table-wrapper {
+  margin-top: 1rem;
+  max-height: 450px;
+  overflow-y: auto;
+}
+/* Custom scrollbar for table */
+.table-wrapper::-webkit-scrollbar {
+  width: 6px;
+}
+.table-wrapper::-webkit-scrollbar-track {
+  background: var(--card-color);
+  border-radius: 3px;
+}
+.table-wrapper::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 3px;
+}
+.table-wrapper::-webkit-scrollbar-thumb:hover {
+  background: var(--accent-primary);
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th,
+td {
+  padding: 0.75rem;
+  text-align: left;
+}
+
+thead {
+  position: sticky;
+  top: 0;
+  background: var(--bg-color);
+}
+
+th {
+  color: var(--text-secondary);
+  font-weight: 600;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  border-bottom: 2px solid var(--border-color);
+}
+
+tbody tr {
+  border-bottom: 1px solid var(--border-color);
+  transition: background-color 0.2s ease;
+}
+
+tbody tr:last-child {
+  border-bottom: none;
+}
+
+tbody tr:hover {
+  background-color: var(--card-color);
+}
+
+.date-badge,
+.price-badge {
+  padding: 0.3rem 0.6rem;
+  border-radius: 6px;
+  font-weight: 600;
+  display: inline-block;
+}
+
+.date-badge {
+  background-color: rgba(148, 163, 184, 0.2);
+  color: var(--text-secondary);
+}
+
+.price-badge {
+  background-color: rgba(56, 239, 125, 0.15);
+  color: var(--accent-green);
+  font-family: monospace;
+}
+
+.error {
+  margin: 2rem auto;
+  padding: 1.5rem;
+  background-color: rgba(239, 68, 68, 0.1);
+  border: 1px solid var(--accent-red);
+  color: var(--accent-red);
+  border-radius: 12px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.error-icon {
+  font-size: 1.5rem;
+}
+
+/* ------------------------------ */
+/* ----- 9. Footer ----- */
+/* ------------------------------ */
+.footer {
+  text-align: center;
+  padding: 2rem;
+  margin-top: 4rem;
+  border-top: 1px solid var(--border-color);
+  color: var(--text-secondary);
+}
+
+/* ------------------------------ */
+/* ----- 10. Responsive Design ----- */
+/* ------------------------------ */
+
+@media (max-width: 1024px) {
+  .results-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  h1 {
+    font-size: 2.5rem;
+  }
+  h2 {
+    font-size: 2rem;
+  }
+  .navbar {
+    flex-direction: column;
+    gap: 1rem;
+  }
+  .form-content {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .predict-btn {
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .stats-row {
+    flex-direction: column;
+    gap: 1rem;
+  }
+  .stock-buttons {
+    grid-template-columns: 1fr;
+  }
+}
